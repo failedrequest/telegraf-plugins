@@ -7,9 +7,7 @@
 import sysctl
 import re
 import pprint as pp
-import ConfigParser
 import time
-import calendar
 import sys
 
 sysname = sysctl.filter('kern.hostname')[0]
@@ -37,7 +35,6 @@ def points_to_influx(points):
     concat_points = ""
     for x in points.items():
         concat_points += ("{}={},").format(str(x[0]),x[1])
-        stamp = calendar.timegm(time.gmtime())
         trim_points = concat_points[:-1]+' '
     return trim_points
 
@@ -58,13 +55,12 @@ def gen_points(nic):
     return points
 
 
+stamp = int(time.time() * 1000)
 points_nic0 = gen_points(nic0_stats)
-stamp = calendar.timegm(time.gmtime())
 tmp_nic0 = points_to_influx(points_nic0)
 print("sfxge_stats,host={},interface={} {}{}").format(hostname,nic0,tmp_nic0,stamp)
 
 points_nic1 = gen_points(nic1_stats)
-stamp = calendar.timegm(time.gmtime())
 tmp_nic1 = points_to_influx(points_nic1)
 print("sfxge_stats,host={},interface={} {}{}").format(hostname,nic1,tmp_nic1,stamp)
 
