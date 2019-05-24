@@ -25,8 +25,13 @@ else:
 nic0a = re.split('(\d)',nic0)
 nic1a = re.split('(\d)',nic1)
 
-nic0_target = ("dev.{}.{}.stats").format(nic0a[0],nic0a[1])
-nic1_target = ("dev.{}.{}.stats").format(nic1a[0],nic1a[1])
+if nic0a == "sfxge":
+     nic0_target = ("dev.{}.{}.stats").format(nic0a[0],nic0a[1])
+     nic1_target = ("dev.{}.{}.stats").format(nic1a[0],nic1a[1])
+else:     
+     nic0_target = ("dev.{}.{}").format(nic0a[0],nic0a[1])
+     nic1_target = ("dev.{}.{}").format(nic1a[0],nic1a[1])
+
 
 nic0_stats = sysctl.filter(nic0_target)
 nic1_stats = sysctl.filter(nic1_target)
