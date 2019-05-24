@@ -51,22 +51,24 @@ def gen_points(nic):
         name = split_var[1].lstrip().split(".")
         long_oid = (split_var[1]).lstrip().replace(".","_")
         split_oid = long_oid.split("_")
-        oid = (long_oid).replace(split_oid[0]+"_"+split_oid[1]+"_"+split_oid[2]+"_","")
+        oid = (long_oid).replace(split_oid[0]+"_"+split_oid[1]+"_"+split_oid[2]+"_","").lstrip()
+        if oid[0] == '%':
+            oid = oid.replace('%','')
         try:
             points[oid] = int(nic[i].value)
         except ValueError:
-             points[oid] = str(nic[i].value)
-        continue
+             #points[oid] = "\"" + str(nic[i].value) + "\""
+             continue
     return points
 
 
 stamp = int(time.time() * 1000)
 points_nic0 = gen_points(nic0_stats)
 tmp_nic0 = points_to_influx(points_nic0)
-print("sfxge_stats,host={},interface={} {}{}").format(hostname,nic0,tmp_nic0,stamp)
+print("sfxge_stats,host={},interface={},type=sdn {}{}").format(hostname,nic0,tmp_nic0,stamp)
 
 points_nic1 = gen_points(nic1_stats)
 tmp_nic1 = points_to_influx(points_nic1)
-print("sfxge_stats,host={},interface={} {}{}").format(hostname,nic1,tmp_nic1,stamp)
+print("sfxge_stats,host={},interface={},type=sdn {}{}").format(hostname,nic1,tmp_nic1,stamp)
 
 
