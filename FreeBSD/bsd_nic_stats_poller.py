@@ -36,12 +36,9 @@ else:
 nic0_stats = sysctl.filter(nic0_target)
 nic1_stats = sysctl.filter(nic1_target)
 
-def points_to_influx(points):
-    concat_points = ""
+def points_to_influx(points,nic):
     for x in points.items():
-        concat_points += ("{}={},").format(str(x[0]),x[1])
-        trim_points = concat_points[:-1]+' '
-    return trim_points
+        print("bsd_nic_stats,host={},interface={},type=sdn {}={} {}").format(hostname,nic,str(x[0]),x[1],int(time.time() * 1000))
 
 def gen_points(nic):
     points = {}
@@ -62,13 +59,10 @@ def gen_points(nic):
     return points
 
 
-stamp = int(time.time() * 1000)
 points_nic0 = gen_points(nic0_stats)
-tmp_nic0 = points_to_influx(points_nic0)
-print("sfxge_stats,host={},interface={},type=sdn {}{}").format(hostname,nic0,tmp_nic0,stamp)
+points_to_influx(points_nic0,nic0)
 
 points_nic1 = gen_points(nic1_stats)
-tmp_nic1 = points_to_influx(points_nic1)
-print("sfxge_stats,host={},interface={},type=sdn {}{}").format(hostname,nic1,tmp_nic1,stamp)
+points_to_influx(points_nic1,nic1)
 
 
