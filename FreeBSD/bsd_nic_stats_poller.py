@@ -37,8 +37,8 @@ nic0_stats = sysctl.filter(nic0_target)
 nic1_stats = sysctl.filter(nic1_target)
 
 def points_to_influx(points,nic):
-    for x in points.items():
-        print("bsd_nic_stats,host={},interface={},type=sdn {}={} {}").format(hostname,nic,str(x[0]),x[1],int(time.time() * 1000))
+    field_tags= ",".join(["{k}={v}".format(k=str(x[0]), v=x[1]) for x in points.items()])
+    print("bsd_nic_stats,interface={} {}").format(nic,field_tags)
 
 def gen_points(nic):
     points = {}
