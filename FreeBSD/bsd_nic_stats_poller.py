@@ -18,7 +18,7 @@ if len(sys.argv) == 3:
     nic0 =  sys.argv[1]
     nic1 =  sys.argv[2]
 else:
-    print(("Usage: {} {} {}").format(sys.argv[0],"sfxge0","sfxge1"))
+    print(f"Usage: {sys.argv[0]} sfxge0 sfxge1")
     sys.exit(127)
 
 nic0a = re.split('(\d)',nic0)
@@ -37,7 +37,7 @@ nic1_stats = sysctl(nic1_target).children
 
 def points_to_influx(points,nic):
     field_tags= ",".join(["{k}={v}".format(k=str(x[0]), v=x[1]) for x in list(points.items())])
-    print(("bsd_nic_stats,interface={} {}").format(nic,field_tags))
+    print(f"bsd_nic_stats,interface={nic},{field_tags}")
 
 def gen_points(nic):
     points = {}
