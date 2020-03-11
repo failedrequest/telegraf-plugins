@@ -2,13 +2,12 @@
 
 # 3/10/2020
 # Updated for python3
-# A Simple sysctl to telegraf plugin for freebsd's vmstats
+# A Simple sysctl to telegraf plugin for freebsd's vmstats to get interupts
 
 from freebsd_sysctl import Sysctl as sysctl
 import subprocess as sp
 import re
 import json
-import pprint as pp
 import sys
 
 hostname = sysctl("kern.hostname").value
@@ -19,27 +18,19 @@ vmstat_output = sp.check_output(["vmstat", "-i", "--libxo", "json", "/dev/null"]
 
 vmstat_data = json.loads(vmstat_output)
 
-pp.pprint(type(vmstat_data["interrupt-statistics"]["interrupt"]))
+for x in enumerate(vmstat_data["interrupt-statistics"]["interrupt"]):
+  normal_key_name = (x[1]["name"]).strip().replace(".","_").replace(":","_").replace(" ","")
+  points_vmstat[normal_key_name] = x[1]["total"]
 
-def points_to_influx(points,nic):
-    field_tags= ",".join(["{k}={v}".format(k=str(x[0]), v=x[1]) for x in list(points.items())])
-    print(("bsd_nic_stats,interface={} {}").format(nic,field_tags))
+def points_to_influx(points):
+    field_tags= ",".join(["{k}={v}".format(k=str(x[0]), v=x[1]) for x in list(points_vmstat.items())])
+    print(("bsd_interupt_stats,{}").format(field_tags))
 
-def gen_points(nic):
-    points = {}
-    for  i in nic:
-        raw_var =  str(i.name).replace(">", "")
-        long_oid = (raw_var).lstrip().replace(".","_")
-        split_oid = long_oid.split("_")
-        oid = (long_oid).replace(split_oid[0]+"_"+split_oid[1]+"_"+split_oid[2]+"_","").lstrip()
-        if oid[0] == '%':
-            oid = oid.replace('%','')
-        try:
-            points[oid] = int(i.value)
-        except ValueError:
-             points[oid] = "\"" + str(i.value) + "\""
-             continue
-    return points
+
+points_to_influx(points_vmstat)
+
+
+
 
 
 
