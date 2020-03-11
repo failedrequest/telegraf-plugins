@@ -37,7 +37,7 @@ nic1_stats = sysctl(nic1_target).children
 
 def points_to_influx(points,nic):
     field_tags= ",".join(["{k}={v}".format(k=str(x[0]), v=x[1]) for x in list(points.items())])
-    print(f"bsd_nic_stats,interface={nic},{field_tags}")
+    print(f"bsd_nic_stats,interface={nic} {field_tags}")
 
 def gen_points(nic):
     points = {}
@@ -51,7 +51,8 @@ def gen_points(nic):
         try:
             points[oid] = int(i.value)
         except ValueError:
-             points[oid] = "\"" + str(i.value) + "\""
+             #formated_string = "\"" + str(i.value) + "\""
+            # points[oid] = formated_string
              continue
     return points
 

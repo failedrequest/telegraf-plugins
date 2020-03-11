@@ -24,7 +24,7 @@ for x in enumerate(vmstat_data["interrupt-statistics"]["interrupt"]):
 
 def points_to_influx(points):
     field_tags= ",".join(["{k}={v}".format(k=str(x[0]), v=x[1]) for x in list(points_vmstat.items())])
-    print(("bsd_interupt_stats,{}").format(field_tags))
+    print(("bsd_interupt_stats {}").format(field_tags))
 
 
 points_to_influx(points_vmstat)
